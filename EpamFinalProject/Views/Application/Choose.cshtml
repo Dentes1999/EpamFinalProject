@@ -1,0 +1,37 @@
+﻿@model List<MyBll.Models.ApartmentView>
+<div>
+    @using (Html.BeginForm("DenyApplication", "Application", FormMethod.Post))
+    {
+        
+        <button type="submit" name="ToChoose" value="false">Deny</button>
+    }
+</div>
+<div class="apps" id="apart">
+    @foreach (var t in Model)
+    {
+        <div class="col-lg-3 div-ap a@(t.NotAppliable)">
+            <img src=@Url.Content(t.Href) class="img-ap" />
+            <p><strong>@t.Name</strong></p>
+            <p><strong>@t.Class</strong></p>
+            <p><strong>Max num of people - @t.AmountOfPeople</strong></p>
+            <p>Price per night: $@t.PricePerNight</p>
+            <ul>
+                @foreach (var h in t.Description)
+                {
+                    <li>@h</li>
+                }
+            </ul>
+            
+            
+                @using (Html.BeginForm("ComleteApplication", "Application", FormMethod.Post))
+                {
+                    <input type="hidden" name="PricePerNight" value="@t.PricePerNight"/>
+                    <button type="submit" name="ToChoose" value="@t.ApartmentId">Choose</button>
+                }
+
+
+            
+            
+        </div>
+    }
+</div>

@@ -1,0 +1,176 @@
+﻿@model List<MyBll.Models.ApartmentView>
+@{
+    ViewBag.Title = "About";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="search">
+    @using (Html.BeginForm("Search", "Apartments", FormMethod.Post, new { id = "myform" }))
+    {
+        <div class="control-ap">
+            <span class="span-ap">Sort by</span>
+            <select class="form-control my-sort-ap" name="Sort">
+                <option>Price</option>
+                <option>Class</option>
+                <option>Name</option>
+
+            </select>
+        </div>
+        <div class="control-ap" >
+            <p>
+                <label for="amount">Price range:</label>
+                <input name="Price" type="text" id="amount" readonly style="border: 0; color: #f6931f; font-weight: bold;">
+            </p>
+
+            <div id="slider-range"></div>
+        </div>
+        <div class="control-ap">
+            <p>
+                <label for="amount">Number of people:</label>
+                <input name="People" type="number" min="1" max="10" />
+            </p>
+
+        </div>
+        <div class="control-ap">
+            <p>
+                <label for="amount">Class of apartments:</label>
+                <div id="checkboxSelectCombo"></div>
+                <!--<button class="btn-save btn btn-primary btn-sm">Save</button>-->
+            </p>
+
+        </div>
+    }
+
+</div>
+@if (User.IsInRole("Admin"))
+{
+<div class="add-apartment">
+    <a href="/Apartments/Add" class="to-adding" type="button">Add new apartment</a>
+</div>
+}
+
+<div class="apps" id="apart">
+    @foreach (var t in Model)
+    {
+    <div class="col-lg-3 div-ap a@(t.NotAppliable)">
+        <img src=@Url.Content(t.Href) class="img-ap" />
+        <p><strong>@t.Name</strong></p>
+        <p><strong>@t.Class</strong></p>
+        <p><strong>Max num of people - @t.AmountOfPeople</strong></p>
+        <p>Price per night: $@t.PricePerNight</p>
+        <ul>
+            @foreach (var h in t.Description)
+            {
+                <li>@h</li>
+            }
+        </ul>
+        @if (User.IsInRole("Admin"))
+        {
+            using (Html.BeginForm("Edit", "Apartments", FormMethod.Post))
+            {
+                <button type="submit" name="ToEdit" value="@t.ApartmentId">Edit</button>
+            }
+
+
+        }
+        @using (Html.BeginForm("Book", "Apartments", FormMethod.Post))
+        {
+            <button type="submit" name="ToBook" value="@t.ApartmentId">See More</button>
+        }
+    </div>
+    }
+</div>
+<script>
+    $( function() {
+        $( "#slider-range" ).slider({
+            range: true,
+            min: 0,
+            max: 500,
+            values: [ 75, 300 ],
+            slide: function (event, ui) {
+                
+                $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                //$("#myform").change();
+            }
+        });
+        $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+            " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+    } );
+</script>
+<script>
+    var colors = [
+        { Name: "Lux" },
+        { Name: "Junior Suite" },
+        
+        { Name: "Standard" },
+    { Name: "Econom" }
+    ];
+    // Material Select Initialization
+    $("#checkboxSelectCombo").igCombo({
+        width: 300,
+        dataSource: colors,
+        textKey: "Name",
+        valueKey: "Name",
+        multiSelection: {
+            enabled: true,
+            showCheckboxes: true
+        },
+        dropDownOrientation: "bottom"
+    });
+</script>
+<script>
+    function insertParamsToURL(params) {
+        return location.href.split('#')[0].split('?')[0] + '?' + params;
+    }
+
+    $(".ui-igcombo-hidden-field").attr("name", "Class");
+    $(".ui-igcombo-hidden-field").attr("id", "set");
+    
+    
+    $('.ui-slider-handle').on('pointerup',
+        function () {
+            alert('hello');
+
+            //$('#myform').change();
+        });
+    $('#slider-range').on('pointerup',
+        function () {
+            //alert('hello');
+
+            $('#myform').change();
+        });
+    /*$('#slider-range').on('mouseup',
+        function () {
+            alert('hello');
+
+            //$('#myform').change();
+        });*/
+    
+    $('#checkboxSelectCombo').on('pointerup',
+        function() {
+            $('#myform').change();
+        });
+    $('#set').on('change',
+        function () {
+            alert("hello");
+            var event = new Event('change');
+
+
+            $('#myform').dispatchEvent(event);
+        });
+    $('#myform').on('change', function () {
+        $form = $(this);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("QueryApartments", "Apartments")",
+            data: $form.serialize(),
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                $("#apart").html(data);
+                window.history.pushState("", "", insertParamsToURL($form.serialize()));
+            }
+        });
+    });
+
+</script>

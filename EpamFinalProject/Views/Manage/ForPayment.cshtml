@@ -1,0 +1,23 @@
+﻿@model List<MyRepository.Models.Application>
+<div>
+    @foreach (var t in Model)
+    {
+        using (Html.BeginForm("Payment", "Manage", FormMethod.Post))
+        {
+            <div class="request">
+            <p>
+                <label>@t.Apartment.Name</label>
+                <label>@t.NumOfPeople</label>
+                <label>@t.ForDates.DateStart.ToString("yyyy-MM-dd")</label>
+                <label>@t.ForDates.DateEnd.ToString("yyyy-MM-dd")</label>
+            </p>
+            <p>
+                <input type="hidden" value=@t.ApplicationId/>
+                <input type = "submit" value="Purchase"/>
+                <label>@t.Status</label>
+            </p>
+            </div>
+        }
+
+    }
+</div>

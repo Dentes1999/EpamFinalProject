@@ -1,0 +1,39 @@
+﻿@model List<MyBll.Models.BaseApplicationManager>
+<div>
+    <table>
+        <tr>
+            <td><label>Class</label></td>
+            <td><label>Num of persons</label></td>
+            <td><label>Check in</label></td>
+            <td><label>Check out</label></td>
+            <td></td>
+        </tr>
+        @foreach (var t in Model)
+        {
+            using (Html.BeginForm("Choose", "Application", FormMethod.Post))
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" name="BaseApplicationId" value="@t.BaseApplicationId" />
+                        <input type="text" readonly name="Class" value="@t.Class" />
+                    </td>
+                    <td>
+                        <input type="hidden" name="UserId" value="@t.UserId" />
+                        <input type="text" readonly name="NumOfPeople" value="@t.NumOfPeople" />
+                    </td>
+                    <td>
+                        <input type="hidden" name="Status" value="@t.Status" />
+                        <input type="text" readonly name="DateIn" value="@t.DateIn" />
+                    </td>
+                    <td>
+                        <input type="text" readonly name="DateOut" value="@t.DateOut" />
+                    </td>
+                    <td>
+                        <button type="submit">Manage</button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+</div>

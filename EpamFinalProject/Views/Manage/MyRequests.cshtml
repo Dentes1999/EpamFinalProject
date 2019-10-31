@@ -1,0 +1,17 @@
+﻿@model List<MyBll.Models.BaseApplicationManager>
+<div>
+    @foreach (var t in Model)
+    {
+        <div class="request">
+            <p>
+                <label>@t.Class</label>
+                <label>@t.NumOfPeople</label>
+                <label>@t.DateIn</label>
+                <label>@t.DateOut</label>
+            </p>
+            <p>
+                <label>@t.Status</label>
+            </p>
+        </div>
+    }
+</div>

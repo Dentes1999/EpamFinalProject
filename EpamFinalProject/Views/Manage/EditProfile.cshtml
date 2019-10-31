@@ -1,0 +1,34 @@
+﻿@model EpamFinalProject.Models.AccountInfo
+<div id="editor">
+    @using (Html.BeginForm("EditAccountAsync", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class = "col-md-2 control-label" >Full name</label>
+            <div class="col-md-10">
+                <input class="form-control" type="text" name="FullName" value="@Model.FullName"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Email</label>
+            <div class="col-md-10">
+                <input class="form-control" type="text" name="Email" value="@Model.Email" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Phone</label>
+            <div class="col-md-10">
+                <input class="form-control" type="text" name="Phone" value="@Model.Phone" />
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="Change Information" />
+            </div>
+        </div>
+    }
+</div>
+

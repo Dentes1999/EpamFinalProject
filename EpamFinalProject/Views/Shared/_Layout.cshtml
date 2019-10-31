@@ -1,12 +1,25 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4.3.2/css/metro-all.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css" />
+    <link href="http://cdn-na.infragistics.com/igniteui/2019.1/latest/css/themes/infragistics/infragistics.theme.css" rel="stylesheet" />
+    <link href="http://cdn-na.infragistics.com/igniteui/2019.1/latest/css/structure/infragistics.css" rel="stylesheet" />
     <title>@ViewBag.Title – приложение ASP.NET</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/bootstrap.min.css")
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="http://cdn-na.infragistics.com/igniteui/2019.1/latest/js/infragistics.core.js"></script>
+    <script src="http://cdn-na.infragistics.com/igniteui/2019.1/latest/js/infragistics.lob.js"></script>
 
 </head>
 <body>
@@ -22,24 +35,31 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Домашняя страница", "Index", "Home")</li>
-                    <li>@Html.ActionLink("О программе", "About", "Home")</li>
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Apartments", "Apartments", "Apartments")</li>
                     <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                    <li>@Html.ActionLink("User Permissions", "UserPerm", "Home")</li>
+                    }
+                    @if (User.IsInRole("Manager"))
+                    {
+                        <li>@Html.ActionLink("Manage Applications", "Managing", "Application")</li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
-        </footer>
-    </div>
+    @RenderBody()
 
-    @Scripts.Render("~/bundles/jquery")
+
+    
     @Scripts.Render("~/bundles/bootstrap")
+    
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
+    
     @RenderSection("scripts", required: false)
 </body>
 </html>

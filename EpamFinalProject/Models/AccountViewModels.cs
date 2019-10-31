@@ -70,6 +70,10 @@ namespace EpamFinalProject.Models
         public string Email { get; set; }
 
         [Required]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
+
+        [Required]
         [StringLength(100, ErrorMessage = "Значение {0} должно содержать не менее {2} символов.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
@@ -79,6 +83,10 @@ namespace EpamFinalProject.Models
         [Display(Name = "Подтверждение пароля")]
         [Compare("Password", ErrorMessage = "Пароль и его подтверждение не совпадают.")]
         public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Phone")]
+        [DataType(DataType.PhoneNumber)]
+        public string Phone { get; set; }
     }
 
     public class ResetPasswordViewModel

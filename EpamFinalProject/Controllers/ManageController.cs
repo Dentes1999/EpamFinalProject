@@ -7,6 +7,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using EpamFinalProject.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using MyRepository.Models;
+using MyBll.Models;
 
 namespace EpamFinalProject.Controllers
 {
@@ -15,15 +18,18 @@ namespace EpamFinalProject.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly IBll _mybll;
 
-        public ManageController()
+        public ManageController(IBll bll)
         {
+            _mybll = bll;
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager,IBll bll)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _mybll = bll;
         }
 
         public ApplicationSignInManager SignInManager
@@ -72,6 +78,17 @@ namespace EpamFinalProject.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
+            //var userid = User.Identity.GetUserId();
+            var context = new ApplicationDbContext();
+            var userStore = new UserStore<ApplicationUser>(context);
+            var user= await userStore.FindByIdAsync(User.Identity.GetUserId());
+            var userinfo=new AccountInfo
+            {
+                Email = user.Email,
+                Phone = user.Phone,
+                FullName = user.FullName
+            };
+            ViewBag.User = userinfo;
             return View(model);
         }
 
@@ -332,8 +349,47 @@ namespace EpamFinalProject.Controllers
 
             base.Dispose(disposing);
         }
+        public async Task<ActionResult> EditAccountAsync(AccountInfo ai)
+        {
+            var context = new ApplicationDbContext();
+            var userStore = new UserStore<ApplicationUser>(context);
+            var user = await userStore.FindByIdAsync(User.Identity.GetUserId());
+            user.FullName = ai.FullName;
+            user.Phone = ai.Phone;
+            user.Email = ai.Email;
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public async Task<ActionResult> EditProfile()
+        {
+            var context = new ApplicationDbContext();
+            var userStore = new UserStore<ApplicationUser>(context);
+            var user = await userStore.FindByIdAsync(User.Identity.GetUserId());
+            var userinfo = new AccountInfo
+            {
+                Email = user.Email,
+                Phone = user.Phone,
+                FullName = user.FullName
+            };
+            return View(userinfo);
+        }
 
-#region Вспомогательные приложения
+        public ActionResult MyRequests()
+        {
+            var res=_mybll.GetRequests(User.Identity.GetUserId());
+            return View(res);
+        }
+        public ActionResult ForPayment()
+        {
+            var res = _mybll.GetApplications(User.Identity.GetUserId());
+            return View(res);
+        }
+        public ActionResult Payment()
+        {
+            
+            return RedirectToAction("Index");
+        }
+        #region Вспомогательные приложения
         // Используется для защиты от XSRF-атак при добавлении внешних имен входа
         private const string XsrfKey = "XsrfId";
 

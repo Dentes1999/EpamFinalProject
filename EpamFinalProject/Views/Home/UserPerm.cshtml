@@ -1,0 +1,55 @@
+﻿@model List<EpamFinalProject.Models.RolesViewModel>
+<div class="users">
+@using (Html.BeginForm("NewPermAsync", "Home", FormMethod.Post))
+{
+    <table class="inlined" border="1">
+        <tr>
+            <td>
+                <label>User Id</label>
+            </td>
+            <td>
+                <label>User email</label>
+            </td>
+            <td>
+                <label>Administrator role</label>
+            </td>
+            <td>
+                <label>Manager role</label>
+            </td>
+        </tr>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+
+
+
+            <tr>
+
+                <td>
+                    <label>@Model[i].UserId</label>
+                    <input type="hidden" readonly="readonly" value="@Model[i].UserId" name="[@(i.ToString())].UserId" />
+                </td>
+                <td>
+                    <label>@Model[i].UserName</label>
+                    <input type="hidden" readonly="readonly" value="@Model[i].UserName" name="[@(i.ToString())].UserName" />
+                </td>
+                <td>
+
+                    <input type="checkbox" value="true" checked=@(Model[i].IsAdmin) name="[@(i.ToString())].ForCheckAdmin" />
+                </td>
+                <td>
+
+                    <input type="checkbox" value="true" checked=@(Model[i].IsManager) name="[@(i.ToString())].ForCheckManager" />
+                </td>
+            </tr>
+
+        }
+
+
+
+    </table>
+    <button type="submit">Save Changes</button>
+}
+</div>
+<div>
+    @Html.ActionLink("Back to home", "Index")
+</div>

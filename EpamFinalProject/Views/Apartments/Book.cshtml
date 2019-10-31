@@ -1,0 +1,106 @@
+﻿@model MyRepository.Models.Apartment
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string datesarr=Json.Encode(ViewBag.Dateses);
+}
+
+<div class="for-img-book">
+    <img src=@Url.Content(Model.Href) class="img-book"/>
+</div>
+<div class="for-form-book">
+    @using (Html.BeginForm("Application", "Apartments", FormMethod.Post,new {id="form"}))
+    {
+        <h5>Book apartment</h5>
+        <label>Check in</label>
+        <label>Check out</label>
+        <br />
+        <div class="form-group">
+            <input id="date1" type="text" class="dates" onkeydown="return false" name="DateIn" required />
+            <input id="date2" type="text" class="dates" onkeydown="return false" name="DateOut" required />
+            <!--<input id="date1"  type="date" class="form-control dates" onkeydown="return false">
+            <input id="date2"  type="date" class="form-control dates" onkeydown="return false">-->
+        </div>
+
+        <div class="form-group">
+            <label>Number of people (from 1 to @Model.AmountOfPeople)</label>
+            <input id="people" name="People" type="number" value="1" min="1" max="@Model.AmountOfPeople" />
+
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input name="Price" type="text" id="price"/>
+            <input name="ApId" type="hidden" value="@Model.ApartmentId"/>
+        </div>
+        <button type="submit" class="send-main">Apply</button>
+        <p id="success">@ViewBag.Success</p>
+    }
+</div>
+
+
+<script>
+    var unavailableDates = @Html.Raw(datesarr);
+    var sorted=unavailableDates.sort();
+    function unavailable(date) {
+        var day = date.getDate();
+        if (day < 10) day = "0" + day;
+        var mon = date.getMonth()+1;
+        if (mon < 10) mon = "0" + mon;
+        dmy = date.getFullYear() + "-" + mon + "-" + day;
+        if ($.inArray(dmy, unavailableDates) == -1) {
+            return [true, ""];
+        } else {
+            return [false, "", "Unavailable"];
+        }
+    }
+    $("#date1").datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        minDate: new Date(),
+        maxDate: '+2y',
+        beforeShowDay: unavailable,
+        onSelect: function (date) {
+
+            var selectedDate = new Date(date);
+            var msecsInADay = 86400000;
+            var endDate = new Date(selectedDate.getTime() + msecsInADay);
+            var i = 0;
+            
+            while (i < sorted.length && new Date(sorted[i]) < selectedDate) {
+                
+                i++;
+            }
+            var k;
+            if (i == sorted.length) k = '+2y';
+            else k = new Date(new Date(sorted[i]).getTime()-msecsInADay);
+            //Set Minimum Date of EndDatePicker After Selected Date of StartDatePicker
+            $("#date2").datepicker("option", "minDate", endDate);
+            $("#date2").datepicker("option", "maxDate", k);
+
+        }
+    });
+    $("#date2").datepicker({
+        dateFormat: 'yy-mm-dd',
+        beforeShowDay: unavailable,
+        changeMonth: true
+    });
+
+
+    $("#form").on("change", function () {
+        if ($("#date1").val() != "" && $("#date2").val() != "") {
+            var date1 = new Date($("#date1").val());
+            var date2 = new Date($("#date2").val());
+            var Difference_In_Time = date2.getTime() - date1.getTime(); 
+  
+            
+            var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+            $("#price").val(+Difference_In_Days * +"@Model.PricePerNight" * +$("#people").val());
+        }
+        
+    });
+    function del() {
+        $("#success").attr("display", "none");
+    }
+
+    setTimeout(del, 4000);
+</script>
